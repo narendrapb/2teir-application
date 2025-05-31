@@ -21,7 +21,7 @@ def add_task():
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    return jsonify({'tasks': tasks})
+    return jsonify({'tasks': tasks}),200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
