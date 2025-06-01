@@ -17,7 +17,7 @@
 
         async function addTask() {
             const task = document.getElementById('taskInput').value;
-            if (!task) return alert('Please enter a task.');
+            if (!task) return alert('Please enter your task.');
             await fetch(`${BACKEND_URL}/add`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
