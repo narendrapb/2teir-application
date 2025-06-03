@@ -13,7 +13,7 @@
 
     <script>
         // Set your backend URL here
-        const BACKEND_URL = window.BACKEND_URL || 'http://localhost:5000';
+        window.BACKEND_URL = '__BACKEND_URL__';
 
         async function addTask() {
             const task = document.getElementById('taskInput').value;
