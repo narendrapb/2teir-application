@@ -23,5 +23,9 @@ def add_task():
 def get_tasks():
     return jsonify({'tasks': tasks}),200
 
+@app.route('/',methods=["GET"])
+def application_health():
+    return jsonify({"health":"Application running on the port 5000"}),200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
