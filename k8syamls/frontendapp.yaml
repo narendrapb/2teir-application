@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -16,19 +16,23 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: pgcontainer.azurecr.io/frontend:1
+        image: pgcontainer.azurecr.io/frontend:2
         ports:
         - containerPort: 80
         env:
         - name: BACKEND_URL
-          value: http://backend:5000
+          valueFrom:
+            configMapKeyRef:
+              name: nginx-app           # The ConfigMap this value comes from.
+              key: backend_url
+          
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
 spec:
-  type: LoadBalancer
+  # type: LoadBalancer
   selector:
     app: frontend
   ports:
