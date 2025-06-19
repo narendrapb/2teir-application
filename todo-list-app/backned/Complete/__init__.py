@@ -1,16 +1,14 @@
 import azure.functions as func
 import json
-from datetime import datetime
 from shared import tasks
-import uuid
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         req_body = req.get_json()
-        task = req_body.get('task')
-        if not task or not task.strip():
+        task_id = req_body.get('id')
+        if not task_id:
             return func.HttpResponse(
-                json.dumps({'status': 'error', 'message': 'Task cannot be empty'}),
+                json.dumps({'status': 'error', 'message': 'Task ID required'}),
                 status_code=400,
                 mimetype='application/json',
                 headers={
@@ -19,27 +17,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "Access-Control-Allow-Headers": "Content-Type"
                 }
             )
-        if len(task.strip()) > 200:
-            return func.HttpResponse(
-                json.dumps({'status': 'error', 'message': 'Task too long (max 200 characters)'}),
-                status_code=400,
-                mimetype='application/json',
-                headers={
-                    "Access-Control-Allow-Origin": "http://localhost:5173",
-                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-                    "Access-Control-Allow-Headers": "Content-Type"
-                }
-            )
-        task_id = str(uuid.uuid4())
-        tasks.append({
-            'id': task_id,
-            'task': task.strip(),
-            'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'completed': False
-        })
+        for task in tasks:
+            if task['id'] == task_id:
+                task['completed'] = not task['completed']
+                return func.HttpResponse(
+                    json.dumps({'status': 'success'}),
+                    status_code=200,
+                    mimetype='application/json',
+                    headers={
+                        "Access-Control-Allow-Origin": "http://localhost:5173",
+                        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                        "Access-Control-Allow-Headers": "Content-Type"
+                    }
+                )
         return func.HttpResponse(
-            json.dumps({'status': 'success', 'task_id': task_id}),
-            status_code=201,
+            json.dumps({'status': 'error', 'message': 'Task not found'}),
+            status_code=404,
             mimetype='application/json',
             headers={
                 "Access-Control-Allow-Origin": "http://localhost:5173",
